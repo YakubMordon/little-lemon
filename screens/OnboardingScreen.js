@@ -5,13 +5,13 @@ import Header from '../components/Header';
 import Button from '../components/Button';
 import InputField from '../components/InputField';
 
-export default function OnboardingScreen({navigation}) {
+export default function OnboardingScreen({route}) {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
 
     function validateEmail() {
       const emailRegex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-      return emailRegex.test(email);
+      return emailRegex.test(email.trim());
     }
 
     const isDisabled = firstName.length > 0 && validateEmail(email)
@@ -26,7 +26,7 @@ export default function OnboardingScreen({navigation}) {
 
     const logIn = () =>{
       logger(true);
-      navigation.navigate("Profile");
+      route.params.setOnboarded(true);
     }
 
     useEffect(() =>{

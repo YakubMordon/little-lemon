@@ -32,10 +32,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      {!onboarded ? (
+      {onboarded ? (
         <Stack.Screen name="Profile" component={ProfileScreen} />
       ) : (
-        <Stack.Screen name="Onboarding" component={OnboardingScreen}/>
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} initialParams={{setOnboarded}}/>
       )}
       </Stack.Navigator> 
     </NavigationContainer>
