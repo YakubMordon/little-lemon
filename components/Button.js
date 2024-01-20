@@ -1,9 +1,9 @@
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 
-export default function Button({isDisabled, logIn}) {
+export default function Button({isDisabled, func}) {
   return (
     <View style={styles.buttonContainer}>
-        <Pressable style={[styles.button, !isDisabled && styles.buttonDisabled]} disabled={isDisabled} onPress={logIn}>
+        <Pressable onPress={func} style={[styles.button, isDisabled && styles.buttonDisabled]} disabled={isDisabled}>
             <Text style={styles.buttonText}>Click</Text>
         </Pressable>
     </View>

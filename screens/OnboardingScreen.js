@@ -2,30 +2,31 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/Header';
-import InputField from '../components/InputField';
 import Button from '../components/Button';
+import InputField from '../components/InputField';
 
-export default function OnboardingScreen() {
+export default function OnboardingScreen({navigation}) {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
 
     function validateEmail() {
-        const emailRegex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
+      const emailRegex = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(email);
     }
 
     const isDisabled = firstName.length > 0 && validateEmail(email)
 
     const logger = async(logStatus) => {
-        try{
-            await AsyncStorage.setItem("isLoggedIn", String(logStatus));
-        }catch(err){
-            console.error(err);
-        }
+      try{
+          await AsyncStorage.setItem("isLoggedIn", String(logStatus));
+      }catch(err){
+          console.error(err);
+      }
     }
 
     const logIn = () =>{
-        logger(true);
+      logger(true);
+      navigation.navigate("Profile");
     }
 
     useEffect(() =>{
@@ -42,7 +43,7 @@ export default function OnboardingScreen() {
                     <InputField title={'Email'} value={email} setter={setEmail}/>
                 </View>
             </View>
-            <Button isDisabled={isDisabled} logIn={logIn}/>
+            <Button isDisabled={!isDisabled} func={logIn}/>
         </View>
     );
 }
@@ -50,15 +51,17 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container:{
     flex: 1,
+  },
+  headerText:{
+    fontFamily: 'sans-serif',
+    color: '#4f635d',
+    fontSize: 26,
     marginTop: 20,
+    marginBottom: 100
   },
   body:{
     backgroundColor: '#cbd2d9',
-    height: '85%',
-    display: 'flex',
-    justifyContent: 'center',
+    height: '80%',
     alignItems: 'center',
-    gap: 240,
-    flexDirection: 'column'
   },
 });

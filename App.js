@@ -14,28 +14,28 @@ export default function App() {
   
   const fetchData = async () =>{
     try{
-      const logged = Boolean(await AsyncStorage.getItem("isLoggedIn"));
+      const logged = await AsyncStorage.getItem('isLoggedIn') === "true";
       setOnboarded(logged);
     }catch(err){
       console.error(err)
     }
   }
 
-  useEffect(() =>{
-    setLoading(false);
-    fetchData();
+  useEffect(() => {
     setLoading(true);
-  },[]);
+    fetchData();
+    setLoading(false);
+  }, []);
 
   if(loading) return <SplashScreen />
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      {onboarded ? (
+      {!onboarded ? (
         <Stack.Screen name="Profile" component={ProfileScreen} />
       ) : (
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen}/>
       )}
       </Stack.Navigator> 
     </NavigationContainer>

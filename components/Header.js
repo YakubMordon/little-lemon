@@ -12,16 +12,16 @@ export default function Header() {
 
 const styles = StyleSheet.create({
     header: {
-        height: 55,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#dee3e9'
-      },
-      headerText:{
-        fontFamily: 'sans-serif',
-        color: '#4f635d',
-        fontSize: 26
-      },
+      height: 55,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#dee3e9'
+    },
+    headerText:{
+      fontFamily: 'sans-serif',
+      color: '#4f635d',
+      fontSize: 26
+    },
 });
