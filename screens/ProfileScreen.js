@@ -3,15 +3,17 @@ import { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import validatePhoneNumber from '../validators/validatePhoneNumber';
+import HeaderProfile from '../components/HeaderProfile';
 import validateEmail from '../validators/validateEmail';
 import validateName from '../validators/validateName';
-import HeaderLogged from '../components/HeaderLogged';
+import FormCheckbox from '../components/FormCheckbox';
+import CircleButton from '../components/CircleButton';
 import FormButton from '../components/FormButton';
 import InputField from '../components/InputField';
 import Avatar from '../components/Avatar';
-import FormCheckbox from '../components/FormCheckbox';
 
-export default function ProfileScreen({setOnboarded}) {
+
+export default function ProfileScreen({setOnboarded, navigation}) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -48,8 +50,6 @@ export default function ProfileScreen({setOnboarded}) {
   
       const data = await AsyncStorage.multiGet(keys);
 
-      console.log(data);
-  
       const dataMap = Object.fromEntries(data);
       
       setFirstName(dataMap.firstName);
@@ -145,11 +145,15 @@ export default function ProfileScreen({setOnboarded}) {
     saveImage();
   },[image])
 
+  const imageRender = () => <Avatar size={40} image={image}/>
+  const goBackRender = () => <CircleButton func={() => navigation.navigate("Home")}/>
+
   if(loading) return <SplashScreen />
 
   return (
     <View style={styles.container}>
-      <HeaderLogged image={image}/>
+      <HeaderProfile image={imageRender} goBack={goBackRender}/>
+      
       <ScrollView style={styles.innerContainer}>
         <Text style={styles.headerText}>Personal information</Text>
 

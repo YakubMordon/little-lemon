@@ -1,14 +1,12 @@
 import { StyleSheet, View } from 'react-native';
-import CircleButton from './CircleButton';
 import Header from './Header';
-import Avatar from './Avatar';
 
-export default function HeaderLogged({image}) {
+export default function HeaderProfile({image, goBack}) {
   return (
     <View style={styles.container}>
-      <CircleButton func={() => console.log("I'm clicked")}/>
+      {goBack()}
       <Header bgColor={'white'}/>
-      <Avatar size={40} image={image}/>
+      {image()}
     </View>
   );
 }

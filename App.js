@@ -1,10 +1,11 @@
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SplashScreen from "./screens/SplashScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationContainer } from "@react-navigation/native";
 import OnboardingScreen from "./screens/OnboardingScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import SplashScreen from "./screens/SplashScreen";
+import HomeScreen from "./screens/HomeScreen";
 import { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,9 +34,12 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         {onboarded ? (
-          <Stack.Screen name="Profile">
-            {(props) => <ProfileScreen {...props} setOnboarded={setOnboarded} />}
-          </Stack.Screen>
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Profile">
+              {(props) => <ProfileScreen {...props} setOnboarded={setOnboarded} />}
+            </Stack.Screen>
+          </>
         ) : (
           <Stack.Screen name="Onboarding">
             {(props) => <OnboardingScreen {...props} setOnboarded={setOnboarded} />}
