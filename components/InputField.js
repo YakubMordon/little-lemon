@@ -1,11 +1,16 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-export default function InputField({title, value, setter}) {
+export default function InputField({title, value, setter, isValid, invalidText, containerStyle, labelStyle, inputStyle, placeholder}) {
   return (
-    <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <TextInput style={styles.input} value={value} onChangeText={(text) => setter(text)}/>
-    </View>
+    <>
+        <View style={[styles.container, containerStyle]}>
+            <Text style={labelStyle}>{title}</Text>
+            <TextInput style={[styles.input, inputStyle]} value={value} onChangeText={(text) => setter(text)} placeholder={placeholder}/>
+        </View>
+        {
+            !isValid && <Text style={styles.error}>Please enter a {invalidText}</Text>
+        }
+    </>
   );
 }
 
@@ -13,19 +18,16 @@ const styles = StyleSheet.create({
     container:{
         marginVertical: 8,
         display: 'flex',
-        alignItems: 'center'
-    },
-    title:{
-        color: '#3b4f5a',
-        fontSize: 23
     },
     input:{
-        marginTop: 20,
         borderColor: '#7f8c99',
         borderWidth: 2,
         borderRadius: 10,
         width: 260,
         height: 40,
         padding: 10,
+    },
+    error:{
+        color: 'red'
     }
 });

@@ -32,11 +32,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      {onboarded ? (
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      ) : (
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} initialParams={{setOnboarded}}/>
-      )}
+        {onboarded ? (
+          <Stack.Screen name="Profile">
+            {(props) => <ProfileScreen {...props} setOnboarded={setOnboarded} />}
+          </Stack.Screen>
+        ) : (
+          <Stack.Screen name="Onboarding">
+            {(props) => <OnboardingScreen {...props} setOnboarded={setOnboarded} />}
+          </Stack.Screen>
+        )}
       </Stack.Navigator> 
     </NavigationContainer>
   );

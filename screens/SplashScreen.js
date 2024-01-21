@@ -11,12 +11,15 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
     container:{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
+      flex: 1,
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
     image: {
-        width: 80,
-        height: 80
+      width: 80,
+      height: 80
     }
 });

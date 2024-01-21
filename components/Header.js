@@ -1,9 +1,9 @@
 import { StyleSheet, Text, Image, View } from 'react-native';
 import image from "../assets/little-lemon-logo.bmp"
 
-export default function Header() {
+export default function Header({bgColor}) {
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, {backgroundColor: bgColor}]}>
         <Image source={image}/>
         <Text style={styles.headerText}> Little Lemon</Text>
     </View>
@@ -16,8 +16,7 @@ const styles = StyleSheet.create({
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#dee3e9'
+      alignItems: 'center'
     },
     headerText:{
       fontFamily: 'sans-serif',
