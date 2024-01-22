@@ -1,7 +1,9 @@
 import { FlatList, Image, Pressable, StyleSheet, Text, View, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-import { createTable, getMenuItems, saveMenuItems, truncateMenuItems } from '../database';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { createTable, getMenuItems, saveMenuItems, filterByQueryAndCategories, truncateMenuItems } from '../database';
+import { useUpdateEffect } from '../utils/useUpdateEffect';
+import { debounce } from 'lodash';
 import Item from '../components/Item';
 import HeaderProfile from '../components/HeaderProfile';
 import headFood from '../assets/headFood.bmp'
@@ -15,8 +17,12 @@ export default function ProfileScreen({navigation}) {
   const [desserts, setDesserts] = useState(false);
   const [drinks, setDrinks] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [query, setQuery] = useState('');
+
   const [image, setImage] = useState([]);
   const [menu, setMenu] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getImage = async() =>{
@@ -37,10 +43,10 @@ export default function ProfileScreen({navigation}) {
     try {
         await createTable();
         let menuItems = await getMenuItems();
-
+        
         if (!menuItems.length) {
          menuItems = await fetchData();
-         saveMenuItems(menuItems);
+         await saveMenuItems(menuItems);
         }
 
        setMenu(menuItems);
@@ -49,12 +55,41 @@ export default function ProfileScreen({navigation}) {
      }
   }
 
+  const handleCategories = (category, setter, value) =>{
+    !value === true ? setCategories([...categories, category]) : setCategories(categories.filter((item) => item != category))
+    setter(!value)
+  }
+
+  const handleSearchChange = (text) => {
+    setSearchQuery(text);
+    debouncedLookup(text);
+  };
+
+  const filterData = async() =>{
+    try {
+      const data = await filterByQueryAndCategories(query, categories);
+      setMenu(data);
+    } catch (e) {
+      Alert.alert(e.message);
+    }
+  }
+
   useEffect(()=>{
     setLoading(true);
     getImage();
     dataManipulation();
     setLoading(false);
   },[])
+
+  useUpdateEffect(()=>{
+    filterData();
+  },[categories, query])
+
+  const lookup = useCallback((q) => {
+    setQuery(q);
+  }, []);
+
+  const debouncedLookup = useMemo(() => debounce(lookup, 500), [lookup]);
 
   if(loading) return <SplashScreen />
 
@@ -67,12 +102,10 @@ export default function ProfileScreen({navigation}) {
 
   const goBackRender = () => {return (<View style={{height: 40, width: 40}} />)}
 
-  const item = ({item}) => <Item name={item.name} description={item.description} price={item.price} image={item.image}/>
-
-  return (
-    <View style={styles.container}>
-        <HeaderProfile image={imageRender} goBack={goBackRender}/>
-        <View style={styles.containerHead}>
+  const renderHeader = () =>{
+    return(
+      <>
+          <View style={styles.containerHead}>
             <View style={styles.containerInnerHead}>
                 <Text style={styles.headLeadingText}>Little Lemon</Text>
                 <Text style={styles.headCityText}>Chicago</Text>
@@ -86,20 +119,35 @@ export default function ProfileScreen({navigation}) {
                     </View>
                     <Image style={styles.headImage} source={headFood}/>
                 </View>
-                <MagnifyingGlass func={() => console.log("I'm pressed")}/>
+                <MagnifyingGlass value={searchQuery} func={(text) => handleSearchChange(text)}/>
             </View>
         </View>
-        <Text style={styles.deliveryText}>ORDER FOR DELIVERY!</Text>
-        <View style={styles.filterContainer}>
-            <FilterButton func={() => setStarters(!starters)} text={'Starters'} isSelected={starters}/>
-            <FilterButton func={() => setMains(!mains)} text={'Mains'} isSelected={mains}/>
-            <FilterButton func={() => setDesserts(!desserts)} text={'Desserts'} isSelected={desserts}/>
-            <FilterButton func={() => setDrinks(!drinks)} text={'Drinks'} isSelected={drinks}/>
+        <View>
+          <Text style={styles.deliveryText}>ORDER FOR DELIVERY!</Text>
+          <View style={styles.filterContainer}>
+              <FilterButton func={() => handleCategories('starters', setStarters, starters)} text={'Starters'} isSelected={starters}/>
+              <FilterButton func={() => handleCategories('mains', setMains, mains)} text={'Mains'} isSelected={mains}/>
+              <FilterButton func={() => handleCategories('desserts', setDesserts, desserts)} text={'Desserts'} isSelected={desserts}/>
+              <FilterButton func={() => handleCategories('drinks', setDrinks, drinks)} text={'Drinks'} isSelected={drinks}/>
+          </View>
         </View>
-        <FlatList 
-            data={menu}
-            renderItem={item}
-        />
+      </>
+    )
+  }
+
+  const item = ({item}) => <Item name={item.name} description={item.description} price={item.price} image={item.image}/>
+
+  const renderFooter = () => <View style={{ height: 20 }} />
+
+  return (
+    <View style={styles.container}>
+        <HeaderProfile image={imageRender} goBack={goBackRender}/>
+          <FlatList 
+              data={menu}
+              renderItem={item}
+              ListHeaderComponent={renderHeader}
+              ListFooterComponent={renderFooter}
+          />
     </View>
   );
 }
@@ -111,7 +159,7 @@ const styles = StyleSheet.create({
   },
   containerHead:{
     backgroundColor: '#495e57',
-    height: '40%'
+    height: 320
   },
   containerInnerHead:{
     marginLeft: 15,
